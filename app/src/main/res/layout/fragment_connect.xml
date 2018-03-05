@@ -34,33 +34,37 @@
         android:layout_height="wrap_content" >
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/device_id"
-            android:hint="device_id"
+            android:id="@+id/et_data"
+            android:hint="需要发送的数据"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
     </android.support.design.widget.TextInputLayout>
 
 
-    <android.support.design.widget.TextInputLayout
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_connect_service"
+        android:text="连接服务"
         android:layout_below="@id/text_input_device_id"
-        android:id="@+id/text_input_gym_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/gym_id"
-            android:hint="gym_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-           />
-
-    </android.support.design.widget.TextInputLayout>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_send"
-        android:text="发送"
-        android:layout_below="@id/text_input_gym_name"
+        android:text="发送数据"
+        android:layout_below="@id/text_input_device_id"
+        android:layout_toRightOf="@id/btn_connect_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_clear_log"
+        android:text="清除log"
+        android:layout_toRightOf="@id/btn_send"
+        android:layout_below="@id/text_input_device_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

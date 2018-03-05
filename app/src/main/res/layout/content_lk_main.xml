@@ -7,10 +7,10 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.liking.android.bleopendoordemo.LkMainActivity"
     tools:showIn="@layout/app_bar_lk_main">
-
     <FrameLayout
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
 
 </android.support.constraint.ConstraintLayout>

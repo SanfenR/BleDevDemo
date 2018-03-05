@@ -2,6 +2,8 @@ package com.liking.android.bleopendoordemo;
 
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +16,16 @@ import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
+import com.liking.android.bleopendoordemo.ble.BleContant;
 import com.liking.android.bleopendoordemo.ble.BleService;
 import com.liking.android.bleopendoordemo.ble.LkBleManager;
+import com.liking.android.bleopendoordemo.data.DataPack;
+import com.liking.android.bleopendoordemo.utils.NumberUtil;
 import com.orhanobut.logger.Logger;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -35,7 +40,7 @@ public class ConnectFragment extends Fragment {
 
     private AppCompatTextView mTvMacAddress, mTvLog;
     private AppCompatButton mBtnConnect, mBtnSend;
-    private TextInputEditText mEtDeviceId, mEtGymId;
+    private TextInputEditText mEtData;
 
     public ConnectFragment() {
         // Required empty public constructor
@@ -69,8 +74,7 @@ public class ConnectFragment extends Fragment {
     private void initView(View inflate) {
         mTvMacAddress = inflate.findViewById(R.id.tv_mac_address);
         mBtnConnect = inflate.findViewById(R.id.btn_connect);
-        mEtDeviceId = inflate.findViewById(R.id.device_id);
-        mEtGymId = inflate.findViewById(R.id.gym_id);
+        mEtData = inflate.findViewById(R.id.et_data);
         mBtnSend = inflate.findViewById(R.id.btn_send);
         mTvLog = inflate.findViewById(R.id.log);
 
@@ -85,21 +89,52 @@ public class ConnectFragment extends Fragment {
         mBtnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEtDeviceId.getText();
+                String result = mEtData.getText().toString();
+                appendTextView("send: ", result);
+                byte[] request = DataPack.pack(result);
+                appendTextView(Arrays.toString(request));
+                appendTextView(NumberUtil.bytesToHexFun(request));
+                write(request);
+            }
+        });
+
+        inflate.findViewById(R.id.btn_clear_log).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearLog();
             }
         });
     }
+
+    BluetoothGattService mGattService;
+
+    public void write(byte[] bytes) {
+        if (mGattService == null) {
+            appendTextView("未找到GattService, 发送失败请先获取服务");
+            return;
+        }
+        BluetoothGattCharacteristic characteristic = mGattService.getCharacteristic(BleContant.WRITE_UUID);
+
+        if (characteristic == null) {
+            appendTextView("未找到WriteCharacteristic, 发送失败请先获取服务");
+        } else {
+            LkBleManager.getInstance().wirteCharacteristic(characteristic, bytes);
+        }
+    }
+
 
     @Override
     public void onResume() {
         super.onResume();
         getActivity().registerReceiver(mGattUpdateReceiver, intentFilter);
+        LkBleManager.getInstance().bindService();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(mGattUpdateReceiver);
+        LkBleManager.getInstance().unBindService();
     }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
@@ -110,6 +145,7 @@ public class ConnectFragment extends Fragment {
         intentFilter.addAction(BleService.ACTION_CHARACTERISTIC_CHANGED);
         return intentFilter;
     }
+
     private IntentFilter intentFilter = makeGattUpdateIntentFilter();
 
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
@@ -118,29 +154,61 @@ public class ConnectFragment extends Fragment {
             final String action = intent.getAction();
             if (BleService.ACTION_GATT_CONNECTED.equals(action)) {
                 Logger.i("BleService", "连接成功");
-                appendTextView("连接成功");
+                appendTextView("连接成功...");
             } else if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Logger.i("BleService", "连接失败");
-                appendTextView("连接失败");
+                appendTextView("连接失败...");
             } else if (BleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-
+                Logger.i("BleService", "建立服务");
+                appendTextView("建立服务...");
+                List<BluetoothGattService> services = LkBleManager.getInstance().getSupportedGattServices();
+                for (BluetoothGattService service : services) {
+                    appendTextView(service.getUuid().toString());
+                    if (service.getUuid().toString().toLowerCase().equals(BleContant.SERVER_UUID.toString().toLowerCase())) {
+                        mGattService = service;
+                        break;
+                    }
+                }
+                if (mGattService == null) {
+                    appendTextView("未找到GattService");
+                } else {
+                    appendTextView("找到GattService");
+                    BluetoothGattCharacteristic characteristic = mGattService.getCharacteristic(BleContant.READ_UUID);
+                    if (characteristic != null) {
+                        appendTextView("设置ReadCharacteristic成功");
+                        LkBleManager.getInstance().setCharacteristicNotification(characteristic, true);
+                    } else {
+                        appendTextView("未找到ReadCharacteristic");
+                    }
+                }
             } else if (BleService.ACTION_CHARACTERISTIC_CHANGED.equals(action)) {
-
+                Logger.i("BleService", "收到回包");
+                appendTextView("收到回包...");
+                byte[] data = intent.getByteArrayExtra(BleService.EXTRA_DATA);
+                String logRet = NumberUtil.bytesToHexFun(data);
+                Logger.i("BleService", "unpack" + logRet);
+                appendTextView(Arrays.toString(data));
+                appendTextView(logRet);
+                String unpack = DataPack.unpack(data);
+                if (unpack != null) {
+                    Logger.i("BleService", "unpack" + unpack);
+                    appendTextView("ret:", unpack);
+                }
             }
         }
     };
 
     private StringBuilder builder = new StringBuilder();
 
-    private void appendTextView(String... strings){
-        for(String s: strings) {
+    private void appendTextView(String... strings) {
+        for (String s : strings) {
             builder.append(s);
         }
         builder.append("\r\n");
         mTvLog.setText(builder.toString());
     }
 
-    private void clearLog(){
+    private void clearLog() {
         builder.delete(0, builder.length());
         mTvLog.setText("");
     }

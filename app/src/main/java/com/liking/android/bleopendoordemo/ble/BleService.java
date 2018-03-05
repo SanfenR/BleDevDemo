@@ -147,7 +147,7 @@ public class BleService extends Service {
             Logger.i(TAG, "onCharacteristicWrite----");
             super.onCharacteristicWrite(gatt, characteristic, status);
             broadcastUpdate(ACTION_CHARACTERISTIC_WRITE);
-            System.out.println("--------write success----- status:" + status);
+            Logger.i("--------write success----- status:" + status);
             if (status == BluetoothGatt.GATT_FAILURE) {
                 Logger.i(TAG, "写入失败");
             } else if (status == BluetoothGatt.GATT_SUCCESS) {
