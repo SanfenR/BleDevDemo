@@ -145,24 +145,7 @@ public class LkMainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(BluetoothDevice item) {
-
+        replaceFragment(ConnectFragment.newInstance(item));
     }
-
-
-
-    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (BleService.ACTION_GATT_CONNECTED.equals(action)) {
-                Logger.i("BleService", "连接成功");
-            } else if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                Logger.i("BleService", "连接失败");
-            } else if (BleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-            } else if (BleService.ACTION_CHARACTERISTIC_CHANGED.equals(action)) {
-            }
-        }
-    };
-
 
 }

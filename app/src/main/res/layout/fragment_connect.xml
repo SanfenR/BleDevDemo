@@ -4,7 +4,31 @@
     android:layout_height="match_parent"
     tools:context="com.liking.android.bleopendoordemo.ConnectFragment">
 
-    <android.support.design.widget.TextInputEditText
+    <RelativeLayout
+        android:id="@+id/rl_mac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_mac_address"
+            android:text="mac address"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_connect"
+            android:text="开始连接"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/rl_mac"
         android:id="@+id/text_input_device_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -15,10 +39,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    </android.support.design.widget.TextInputEditText>
+    </android.support.design.widget.TextInputLayout>
 
 
-    <android.support.design.widget.TextInputEditText
+    <android.support.design.widget.TextInputLayout
         android:layout_below="@id/text_input_device_id"
         android:id="@+id/text_input_gym_name"
         android:layout_width="match_parent"
@@ -31,12 +55,12 @@
             android:layout_height="wrap_content"
            />
 
-    </android.support.design.widget.TextInputEditText>
+    </android.support.design.widget.TextInputLayout>
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_send"
         android:text="发送"
-        android:layout_below="@id/text_input_device_id"
+        android:layout_below="@id/text_input_gym_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -46,7 +70,7 @@
         android:layout_margin="8dp"
         android:layout_below="@id/btn_send">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/log"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

@@ -15,8 +15,6 @@ import com.orhanobut.logger.Logger;
 
 public class LkApplication extends Application {
 
-
-
     @Override
     public void onCreate() {
         super.onCreate();
