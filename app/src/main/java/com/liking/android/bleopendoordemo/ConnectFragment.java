@@ -133,6 +133,7 @@ public class ConnectFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        LkBleManager.getInstance().disconnect();
         getActivity().unregisterReceiver(mGattUpdateReceiver);
         LkBleManager.getInstance().unBindService();
     }

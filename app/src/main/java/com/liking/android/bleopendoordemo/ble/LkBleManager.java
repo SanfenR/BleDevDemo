@@ -73,6 +73,11 @@ public class LkBleManager implements LkBleImp {
             mBleService.connect(macAddress);
     }
 
+    public void disconnect() {
+        if (mBleService != null)
+            mBleService.disconnect();
+    }
+
     public List<BluetoothGattService> getSupportedGattServices(){
         if (mBleService != null) {
             return mBleService.getSupportedGattServices();
