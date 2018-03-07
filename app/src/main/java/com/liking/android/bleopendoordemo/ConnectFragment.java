@@ -46,6 +46,7 @@ public class ConnectFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     public static ConnectFragment newInstance(BluetoothDevice device) {
         ConnectFragment fragment = new ConnectFragment();
         Bundle args = new Bundle();
@@ -72,6 +73,7 @@ public class ConnectFragment extends Fragment {
     }
 
     private void initView(View inflate) {
+
         mTvMacAddress = inflate.findViewById(R.id.tv_mac_address);
         mBtnConnect = inflate.findViewById(R.id.btn_connect);
         mEtData = inflate.findViewById(R.id.et_data);

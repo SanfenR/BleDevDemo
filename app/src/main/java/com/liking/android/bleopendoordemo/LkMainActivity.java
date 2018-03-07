@@ -2,6 +2,7 @@ package com.liking.android.bleopendoordemo;
 
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -92,8 +94,23 @@ public class LkMainActivity extends AppCompatActivity implements SearchFragment.
     }
 
     @Override
-    public void onListFragmentInteraction(BluetoothDevice item) {
-        replaceFragment(ConnectFragment.newInstance(item));
+    public void onListFragmentInteraction(final BluetoothDevice item) {
+        new AlertDialog.Builder(this)
+                .setNegativeButton("低功耗蓝牙", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        replaceFragment(ConnectFragment.newInstance(item));
+                        dialog.dismiss();
+                    }
+                })
+                .setNeutralButton("普通蓝牙", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        replaceFragment(NormalBluetoothFragment.newInstance(item));
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 
 }

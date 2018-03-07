@@ -109,20 +109,28 @@ public class BleService extends Service {
             super.onConnectionStateChange(gatt, status, newState);
             Logger.i(TAG, "onConnectionStateChange----");
             String intentAction;
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                intentAction = ACTION_GATT_CONNECTED;
-                mConnectionState = STATE_CONNECTED;
-                broadcastUpdate(intentAction);
-                Logger.i(TAG, "Connected to GATT server.");
-                // Attempts to discover services after successful connection.
-                Logger.i(TAG, "Attempting to start service discovery:" +
-                        mBluetoothGatt.discoverServices());
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                intentAction = ACTION_GATT_DISCONNECTED;
-                mConnectionState = STATE_DISCONNECTED;
-                Log.i(TAG, "Disconnected from GATT server.");
-                broadcastUpdate(intentAction);
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                if (newState == BluetoothProfile.STATE_CONNECTED) {
+                    intentAction = ACTION_GATT_CONNECTED;
+                    mConnectionState = STATE_CONNECTED;
+                    broadcastUpdate(intentAction);
+                    Logger.i(TAG, "Connected to GATT server.");
+                    // Attempts to discover services after successful connection.
+                    Logger.i(TAG, "Attempting to start service discovery:" +
+                            mBluetoothGatt.discoverServices());
+                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    close();
+                    intentAction = ACTION_GATT_DISCONNECTED;
+                    mConnectionState = STATE_DISCONNECTED;
+                    Logger.i(TAG, "Disconnected from GATT server.");
+                    broadcastUpdate(intentAction);
+                }
+            } else {
+                close();
+                Logger.i(TAG, "failed from GATT server.");
             }
+
+
         }
 
         @Override
@@ -191,6 +199,8 @@ public class BleService extends Service {
             Logger.i(TAG, "onMtuChanged----");
             super.onMtuChanged(gatt, mtu, status);
         }
+
+
     };
 
     private void broadcastUpdate(final String action) {
@@ -273,16 +283,14 @@ public class BleService extends Service {
      * released properly.
      */
     public void close() {
-        if (mBluetoothGatt != null) {
-            mBluetoothGatt.close();
+        if (mBluetoothGatt == null) {
+            return;
         }
+        Log.w(TAG, "mBluetoothGatt closed");
+        mBluetoothDeviceAddress = null;
+        disconnect();
+        mBluetoothGatt.close();
         mBluetoothGatt = null;
-        if (mBluetoothAdapter != null) {
-            if (mBluetoothAdapter.isDiscovering()) {
-                mBluetoothAdapter.cancelDiscovery();
-            }
-        }
-        mBluetoothAdapter = null;
     }
 
     /**
