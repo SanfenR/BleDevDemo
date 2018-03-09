@@ -73,7 +73,6 @@ public class ConnectFragment extends Fragment {
     }
 
     private void initView(View inflate) {
-
         mTvMacAddress = inflate.findViewById(R.id.tv_mac_address);
         mBtnConnect = inflate.findViewById(R.id.btn_connect);
         mEtData = inflate.findViewById(R.id.et_data);
@@ -93,10 +92,18 @@ public class ConnectFragment extends Fragment {
             public void onClick(View v) {
                 String result = mEtData.getText().toString();
                 appendTextView("send: ", result);
-                byte[] request = DataPack.pack(result);
+                byte[] request = DataPack.openDoor(result);
                 appendTextView(Arrays.toString(request));
                 appendTextView(NumberUtil.bytesToHexFun(request));
                 write(request);
+            }
+        });
+
+        inflate.findViewById(R.id.btn_device_info).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte[] bytes = DataPack.deviceInfo();
+                write(bytes);
             }
         });
 
@@ -124,7 +131,6 @@ public class ConnectFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -138,6 +144,7 @@ public class ConnectFragment extends Fragment {
         LkBleManager.getInstance().disconnect();
         getActivity().unregisterReceiver(mGattUpdateReceiver);
         LkBleManager.getInstance().unBindService();
+
     }
 
     private static IntentFilter makeGattUpdateIntentFilter() {

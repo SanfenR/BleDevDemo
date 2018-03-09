@@ -50,12 +50,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_device_info"
+        android:text="设备信息"
+        android:layout_below="@id/text_input_device_id"
+        android:layout_toRightOf="@id/btn_connect_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_send"
         android:text="发送数据"
         android:layout_below="@id/text_input_device_id"
-        android:layout_toRightOf="@id/btn_connect_service"
+        android:layout_toRightOf="@id/btn_device_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

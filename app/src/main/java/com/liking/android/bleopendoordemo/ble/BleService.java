@@ -13,13 +13,20 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
+
+import static android.bluetooth.BluetoothDevice.PHY_LE_1M_MASK;
+import static android.bluetooth.BluetoothDevice.PHY_LE_2M_MASK;
+import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
 
 
 public class BleService extends Service {
@@ -119,7 +126,6 @@ public class BleService extends Service {
                     Logger.i(TAG, "Attempting to start service discovery:" +
                             mBluetoothGatt.discoverServices());
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    close();
                     intentAction = ACTION_GATT_DISCONNECTED;
                     mConnectionState = STATE_DISCONNECTED;
                     Logger.i(TAG, "Disconnected from GATT server.");
@@ -127,10 +133,11 @@ public class BleService extends Service {
                 }
             } else {
                 close();
-                Logger.i(TAG, "failed from GATT server.");
+                intentAction = ACTION_GATT_DISCONNECTED;
+                mConnectionState = STATE_DISCONNECTED;
+                Logger.i(TAG, "Disconnected from GATT server.");
+                broadcastUpdate(intentAction);
             }
-
-
         }
 
         @Override
@@ -140,7 +147,7 @@ public class BleService extends Service {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
             } else {
-                Log.w(TAG, "onServicesDiscovered received: " + status);
+                Logger.w(TAG, "onServicesDiscovered received: " + status);
             }
         }
 
@@ -257,7 +264,30 @@ public class BleService extends Service {
         }
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
-        mBluetoothGatt = device.connectGatt(this, false, mBluetoothGattCallback);
+
+
+        Method connectGattMethod = null;
+
+        try {
+            connectGattMethod = device.getClass().getMethod("connectGatt", Context.class, boolean.class, BluetoothGattCallback.class, int.class);
+            mBluetoothGatt = (BluetoothGatt) connectGattMethod.invoke(device, this, false, mBluetoothGattCallback, 2); // (2 == LE, 1 == BR/EDR)
+        } catch (NoSuchMethodException e) {
+            //NoSuchMethod
+        } catch (IllegalAccessException e) {
+            //IllegalAccessException
+        } catch (IllegalArgumentException e) {
+            //IllegalArgumentException
+        } catch (InvocationTargetException e) {
+            //InvocationTargetException
+        }
+
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            mBluetoothGatt = device.connectGatt(this, false, mBluetoothGattCallback, TRANSPORT_LE);
+//        } else {
+//            mBluetoothGatt = device.connectGatt(this, false, mBluetoothGattCallback);
+//
+//        }
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
