@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 public class LkMainActivity extends AppCompatActivity implements SearchFragment.OnListFragmentInteractionListener {
 
     private String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,

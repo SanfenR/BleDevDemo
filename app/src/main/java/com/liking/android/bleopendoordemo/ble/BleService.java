@@ -266,28 +266,27 @@ public class BleService extends Service {
         // parameter to false.
 
 
-        Method connectGattMethod = null;
-
-        try {
-            connectGattMethod = device.getClass().getMethod("connectGatt", Context.class, boolean.class, BluetoothGattCallback.class, int.class);
-            mBluetoothGatt = (BluetoothGatt) connectGattMethod.invoke(device, this, false, mBluetoothGattCallback, 2); // (2 == LE, 1 == BR/EDR)
-        } catch (NoSuchMethodException e) {
-            //NoSuchMethod
-        } catch (IllegalAccessException e) {
-            //IllegalAccessException
-        } catch (IllegalArgumentException e) {
-            //IllegalArgumentException
-        } catch (InvocationTargetException e) {
-            //InvocationTargetException
-        }
-
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            mBluetoothGatt = device.connectGatt(this, false, mBluetoothGattCallback, TRANSPORT_LE);
-//        } else {
-//            mBluetoothGatt = device.connectGatt(this, false, mBluetoothGattCallback);
+//        Method connectGattMethod = null;
 //
+//        try {
+//            connectGattMethod = device.getClass().getMethod("connectGatt", Context.class, boolean.class, BluetoothGattCallback.class, int.class);
+//            mBluetoothGatt = (BluetoothGatt) connectGattMethod.invoke(device, this, false, mBluetoothGattCallback, 2); // (2 == LE, 1 == BR/EDR)
+//        } catch (NoSuchMethodException e) {
+//            //NoSuchMethod
+//        } catch (IllegalAccessException e) {
+//            //IllegalAccessException
+//        } catch (IllegalArgumentException e) {
+//            //IllegalArgumentException
+//        } catch (InvocationTargetException e) {
+//            //InvocationTargetException
 //        }
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mBluetoothGatt = device.connectGatt(this, false, mBluetoothGattCallback, TRANSPORT_LE);
+        } else {
+            mBluetoothGatt = device.connectGatt(this, false, mBluetoothGattCallback);
+        }
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
