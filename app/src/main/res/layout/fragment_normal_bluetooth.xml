@@ -1,13 +1,34 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.liking.android.bleopendoordemo.NormalBluetoothFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_mac_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_mac_address"
+        android:text="连接设备" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_below="@+id/btn_connect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_log"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.NestedScrollView>
+
+</RelativeLayout>
