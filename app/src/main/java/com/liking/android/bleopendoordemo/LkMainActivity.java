@@ -81,6 +81,7 @@ public class LkMainActivity extends AppCompatActivity implements SearchFragment.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search_item:
+                setTitle("搜索设备");
                 replaceFragment(SearchFragment.newInstance(1));
                 break;
         }
@@ -101,13 +102,15 @@ public class LkMainActivity extends AppCompatActivity implements SearchFragment.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         replaceFragment(ConnectFragment.newInstance(item));
+                        setTitle("低功耗蓝牙");
                         dialog.dismiss();
                     }
                 })
-                .setNeutralButton("普通蓝牙", new DialogInterface.OnClickListener() {
+                .setNeutralButton("传统蓝牙", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         replaceFragment(NormalBluetoothFragment.newInstance(item));
+                        setTitle("传统蓝牙");
                         dialog.dismiss();
                     }
                 })

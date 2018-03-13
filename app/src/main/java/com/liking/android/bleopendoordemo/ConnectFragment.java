@@ -113,6 +113,8 @@ public class ConnectFragment extends Fragment {
                 clearLog();
             }
         });
+
+
     }
 
     BluetoothGattService mGattService;
