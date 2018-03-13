@@ -38,15 +38,6 @@ public class LkMainActivity extends AppCompatActivity implements SearchFragment.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ActivityCompat.requestPermissions(this, permissions, PERMISSIONS_CODE);
         }
@@ -92,7 +83,8 @@ public class LkMainActivity extends AppCompatActivity implements SearchFragment.
     public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_fragment,fragment).commit();
+        fragmentTransaction.replace(R.id.main_fragment,fragment);
+        fragmentTransaction.show(fragment);
     }
 
     @Override
