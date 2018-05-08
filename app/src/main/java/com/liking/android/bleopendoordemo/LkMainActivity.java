@@ -84,7 +84,7 @@ public class LkMainActivity extends AppCompatActivity implements SearchFragment.
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_fragment,fragment);
-        fragmentTransaction.show(fragment);
+        fragmentTransaction.show(fragment).commit();
     }
 
     @Override
